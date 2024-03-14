@@ -4,7 +4,8 @@
     <input
         v-bind="$attrs"
         :type="type"
-        required
+        :value="modelValue"
+        @input="$emit('update:modelValue', $event.currentTarget.value)"
     />
   </div>
 </template>
@@ -12,15 +13,18 @@
 <script>
 export default {
   name: "FormInput",
-
   props: {
     label: {
       type: String,
-      default: ''
+      default: ""
     },
     type: {
       type: String,
-      default: 'text'
+      default: "text"
+    },
+    modelValue: {
+      type: String,
+      default: ""
     }
   }
 }
