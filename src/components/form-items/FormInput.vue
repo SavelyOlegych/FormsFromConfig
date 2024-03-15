@@ -6,6 +6,7 @@
         :type="type"
         :value="modelValue"
         @input="$emit('update:modelValue', $event.currentTarget.value)"
+        required
     />
   </div>
 </template>

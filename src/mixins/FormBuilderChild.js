@@ -1,13 +1,13 @@
 export default {
   methods: {
+    validateChildForm() {
+      this.passwordValidation(document.querySelector("#childForm"));
+    },
     async sendChildForm() {
       if (
         this.formModels.childName &&
         this.formModels.childGender &&
-        this.formModels.childAge &&
-        this.formModels.childPass &&
-        this.formModels.childRepeatPass &&
-        this.formModels.childPass === this.formModels.childRepeatPass
+        this.formModels.childAge
       ) {
         const body = {
           name: this.formModels.childName,

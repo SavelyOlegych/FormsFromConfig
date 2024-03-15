@@ -1,13 +1,13 @@
 export default {
   methods: {
+    validateParentForm() {
+      this.passwordValidation(document.querySelector("#parentForm"));
+    },
     async sendParentForm() {
       if (
         this.formModels.parentName &&
         this.formModels.parentGender &&
-        this.formModels.parentAge &&
-        this.formModels.parentPass &&
-        this.formModels.parentRepeatPass &&
-        this.formModels.parentPass === this.formModels.parentRepeatPass
+        this.formModels.parentAge
       ) {
         const body = {
           name: this.formModels.parentName,

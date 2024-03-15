@@ -6,7 +6,7 @@
       :key="member.name"
     >
       <h2>{{ member.name }}</h2>
-      <form>
+      <form :id="memberType + 'Form'" @submit.prevent>
         <template v-for="formItem in member.items" :key="member.name + formItem.name">
           <component
             :is="formItemComponent(formItem.type)"
@@ -18,8 +18,8 @@
           />
         </template>
   
-        <button type="submit" @click.prevent="sendForm(memberType)">Отправить</button>
-        <button type="reset" @click.prevent="clearForm(memberType)">Стереть</button>
+        <button type="submit" @click="sendForm(memberType)">Отправить</button>
+        <button type="reset" @click.prevent="setDefaultModelsValues(memberType)">Стереть</button>
       </form>
     </div>
   </div>
@@ -44,18 +44,7 @@ export default {
   data() {
     return {
       formData,
-      formModels: {
-        parentName: "",
-        parentGender: "female",
-        parentAge: "20",
-        parentPass: "",
-        parentRepeatPass: "",
-        childName: "",
-        childGender: "male",
-        childAge: "10",
-        childPass: "",
-        childRepeatPass: "",
-      }
+      formModels: {},
     }
   },
   methods: {
@@ -72,23 +61,48 @@ export default {
       
       return memberType + formItemNameCamelCase;
     },
+    setDefaultModelsValues(memberType) {
+      this.formData[memberType].items.forEach(item => {
+        this.formModels[this.getCurrentModelName(memberType, item.name)] =
+          item.type === "select" ? item.additional.options[0].value : "";
+      });
+    },
+    passwordValidation(form) {
+      const passInput = form.querySelector("input[name='pass']");
+      const repeatPassInput = form.querySelector("input[name='repeat-pass']");
+
+      passInput.addEventListener("input", () => passInput.setCustomValidity(""));
+      repeatPassInput.addEventListener("input", () => repeatPassInput.setCustomValidity(""));
+
+      if (passInput.validity.valueMissing) {
+        passInput.setCustomValidity("Введите пароль");
+      } else {
+        passInput.setCustomValidity("");
+      }
+
+      if (passInput.value !== repeatPassInput.value) {
+        repeatPassInput.setCustomValidity("Пароли не совпадают");
+      } else {
+        repeatPassInput.setCustomValidity("");
+      }
+    },
     sendForm(memberType) {
       switch (memberType) {
         case "parent":
+          this.validateParentForm();
           this.sendParentForm();
           break;
         case "child":
+          this.validateChildForm();
           this.sendChildForm();
           break;
       }
     },
-    clearForm(memberType) {
-      this.formModels[memberType + "Name"] = "";
-      this.formModels[memberType + "Gender"] = "";
-      this.formModels[memberType + "Age"] = "";
-      this.formModels[memberType + "Pass"] = "";
-      this.formModels[memberType + "RepeatPass"] = "";
-    },
+  },
+  mounted() {
+    for (const memberType of Object.keys(this.formData)) {
+      this.setDefaultModelsValues(memberType);
+    }
   },
 }
 </script>
